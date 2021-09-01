@@ -90,6 +90,8 @@ class Node:
         https: bool,
         heartbeat: float,
         region: Optional[discord.VoiceRegion],
+        resume_key: Optional[str] = "bobo bobo",
+        resume: Optional[bool] = True,
         spotify: Optional[spotify.SpotifyClient],
         identifier: str,
         dumps: Callable[[Any], str],
@@ -101,6 +103,8 @@ class Node:
         self._https: bool = https
         self._heartbeat: float = heartbeat
         self._region: Optional[discord.VoiceRegion] = region
+        self._resume_key: Optional[str] = resume_key,
+        self._resume: Optional[bool] = resume,
         self._spotify = spotify
         self._identifier: str = identifier
 
@@ -128,6 +132,15 @@ class Node:
     def region(self) -> Optional[discord.VoiceRegion]:
         """The voice region of the Node."""
         return self._region
+    @property
+    def resume_key(self) -> Optional[str]:
+        """The resume key for resuming lavalink session."""
+        return self._resume_key
+    
+    @property
+    def resume(self) -> bool:
+        """Whether to resume lavalink session or not."""
+        return self._resume
 
     @property
     def identifier(self) -> str:
@@ -356,6 +369,8 @@ class NodePool:
         https: bool = False,
         heartbeat: float = 30,
         region: Optional[discord.VoiceRegion] = None,
+        resume_key: Optional[str] = "bobo bobo",
+        resume: Optional[bool] = True,
         spotify_client: Optional[spotify.SpotifyClient] = None,
         identifier: str = MISSING,
         dumps: Callable[[Any], str] = json.dumps,
@@ -380,7 +395,11 @@ class NodePool:
         heartbeat: :class:`float`
             The heartbeat in seconds for the node. Defaults to 30 seconds.
         region: Optional[:class:`discord.VoiceRegion`]
-            The discord.py VoiceRegion to assign to the node. This is useful for node region balancing.
+            The discord.py VoiceRegion to assign to the node. This is useful for node region balancing
+        resume_key: Optional[:class:`str`]
+            The resume key for resuming lavalink session. Defaults to ``bobo bobo``.
+        resume: Optional[:class:`bool`]
+            Whether to resume lavalink session or not. Defaults to ``True``.
         spotify_client: Optional[:class:`wavelink.ext.spotify.SpotifyClient`]
             An optional SpotifyClient with credentials to use when searching for spotify tracks.
         identifier: :class:`str`
@@ -408,6 +427,8 @@ class NodePool:
             https=https,
             heartbeat=heartbeat,
             region=region,
+            resume_key=resume_key,
+            resume=resume,
             spotify=spotify_client,
             identifier=identifier,
             dumps=dumps,
