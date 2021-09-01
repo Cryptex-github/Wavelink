@@ -47,6 +47,7 @@ class Websocket:
         if session is MISSING:
             session = aiohttp.ClientSession()
         self.session: aiohttp.ClientSession = session
+        self.resume_configured: bool = False
         self.listener: Optional[asyncio.Task] = None
 
         self.host: str = f'{"https://" if self.node._https else "http://"}{self.node.host}:{self.node.port}'
@@ -71,8 +72,12 @@ class Websocket:
             )
 
         try:
+            headers = self.headers
+            if self.node.resume and self.node.resume_key:
+                headers["Resume-Key"] = self.node.resume_key
+                
             self.websocket = await self.session.ws_connect(
-                self.ws_host, headers=self.headers, heartbeat=self.node._heartbeat
+                self.ws_host, headers=headers, heartbeat=self.node._heartbeat
             )
         except Exception as error:
             if (
@@ -91,6 +96,15 @@ class Websocket:
         if self.is_connected():
             self.dispatch("node_ready", self.node)
             logger.debug(f"Connection established...{self.node.__repr__()}")
+         
+        if not self.resume_configured:
+            await self.send(**{
+                "op": "configureResuming",
+                "key": self.node.resume_key,
+                "timeout": 60
+            })
+
+            self.resume_configured = True
 
     async def listen(self) -> None:
         backoff = wavelink.Backoff(base=1, maximum_time=60, maximum_tries=None)
