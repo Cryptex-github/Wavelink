@@ -23,14 +23,21 @@ SOFTWARE.
 import aiohttp
 import asyncio
 import logging
+from discord import __version__
 from discord.ext import commands
 from functools import partial
-from json import dumps
+from json import loads, dumps
 from typing import Optional, Union
 
 from .errors import *
 from .player import Player
 from .node import Node
+
+
+if __version__.startswith('2.0.0'):
+    event_to_listen = 'on_socket_raw_receive'
+else:
+    event_to_listen = 'on_socket_response'
 
 
 __log__ = logging.getLogger(__name__)
@@ -53,13 +60,13 @@ class Client:
             raise TypeError(msg)
 
         try:
-            update_handlers = bot.extra_events['on_socket_response']
+            update_handlers = bot.extra_events[event_to_listen]
         except KeyError:
             return super().__new__(cls)
 
         for handler in update_handlers:
             if handler.__self__.__class__.__qualname__ == 'wavelink.Client':
-                bot.remove_listener(handler, 'on_socket_response')
+                bot.remove_listener(handler, event_to_listen)
 
         return super().__new__(cls)
 
@@ -72,7 +79,7 @@ class Client:
 
         self._dumps = dumps
 
-        bot.add_listener(self.update_handler, 'on_socket_response')
+        bot.add_listener(self.update_handler, event_to_listen)
 
     @property
     def shard_count(self) -> int:
@@ -456,6 +463,7 @@ class Client:
         await node.destroy()
 
     async def update_handler(self, data) -> None:
+        data = loads(data)
         if not data or 't' not in data:
             return
 
