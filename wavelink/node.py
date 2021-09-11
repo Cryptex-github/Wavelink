@@ -67,6 +67,8 @@ class Node:
                  rest_uri: str,
                  password: str,
                  region: str,
+                 resume_key: Optional[str] = "bobo bobo",
+                 resume: Optional[bool] = True,
                  identifier: str,
                  shard_id: int = None,
                  secure: bool = False,
@@ -81,6 +83,8 @@ class Node:
         self.uid = user_id
         self.password = password
         self.region = region
+        self.resume_key: Optional[str] = resume_key,
+        self.resume: Optional[bool] = resume,
         self.identifier = identifier
         self.secure = secure
         self.heartbeat = heartbeat
@@ -131,6 +135,8 @@ class Node:
                                     password=self.password,
                                     shard_count=self.shards,
                                     user_id=self.uid,
+                                    resume_key=resume_key,
+                                    resume=resume,
                                     secure=self.secure,
                                     dumps=self._dumps)
         await self._websocket._connect()
