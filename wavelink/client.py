@@ -367,8 +367,7 @@ class Client:
 
         return player
 
-    async def initiate_node(self, host: str, port: int, *, rest_uri: str, password: str, region: str, identifier: str,
-                            shard_id: int = None, secure: bool = False, heartbeat: float = None) -> Node:
+    async def initiate_node(self, host: str, port: int, *, rest_uri: str, password: str, region: str, resume_key: Optional[str] = "bobo bobo", resume: Optional[bool] = True, identifier: stshard_id: int = None, secure: bool = False, heartbeat: float = None) -> Node:
         """|coro|
 
         Initiate a Node and connect to the provided server.
@@ -385,6 +384,10 @@ class Client:
             The password to authenticate on the server.
         region: str
             The region as a valid discord.py guild.region to associate the :class:`wavelink.node.Node` with.
+        resume_key: Optional[:class:`str`]
+            The resume key for resuming lavalink session. Defaults to ``bobo bobo``.
+        resume: Optional[:class:`bool`]
+            Whether to resume lavalink session or not. Defaults to ``True``.
         identifier: str
             A unique identifier for the :class:`wavelink.node.Node`
         shard_id: Optional[int]
@@ -419,6 +422,8 @@ class Client:
                     session=self.session,
                     client=self,
                     secure=secure,
+                    resume_key=resume_key,
+                    resume=resume,
                     heartbeat=heartbeat,
                     dumps=self._dumps)
 
