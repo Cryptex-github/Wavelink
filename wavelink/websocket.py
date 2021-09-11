@@ -97,7 +97,7 @@ class Websocket:
             self.dispatch("node_ready", self.node)
             logger.debug(f"Connection established...{self.node.__repr__()}")
          
-        if not self.resume_configured:
+        if not self.resume_configured and self.node.resume:
             await self.send(**{
                 "op": "configureResuming",
                 "key": self.node.resume_key,
