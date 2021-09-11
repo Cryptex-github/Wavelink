@@ -46,9 +46,12 @@ class WebSocket:
         self.password = attrs.get('password')
         self.shard_count = attrs.get('shard_count')
         self.user_id = attrs.get('user_id')
+        self.resume_key = attrs.get('resume_key')
+        self.resume = attrs.get('resume')
         self.secure = attrs.get('secure')
         self._dumps = attrs.get('dumps')
 
+        self.resume_configured: bool = False
         self._websocket = None
         self._last_exc = None
         self._task = None
@@ -94,6 +97,14 @@ class WebSocket:
         self._node.available = True
 
         if self.is_connected:
+            if not self.resume_configured and self._node.resume:
+                await self._send(**{
+                    "op": "configureResuming",
+                    "key": self._node.resume_key,
+                    "timeout": 60
+                })
+
+                self.resume_configured = True
             await self.client._dispatch_listeners('on_node_ready', self._node)
             __log__.debug('WEBSOCKET | Connection established...%s', self._node.__repr__())
 
