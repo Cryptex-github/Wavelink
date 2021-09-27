@@ -103,8 +103,8 @@ class Node:
         self._https: bool = https
         self._heartbeat: float = heartbeat
         self._region: Optional[discord.VoiceRegion] = region
-        self._resume_key: Optional[str] = resume_key,
-        self._resume: Optional[bool] = resume,
+        self._resume_key: Optional[str] = resume_key
+        self._resume: Optional[bool] = resume
         self._spotify = spotify
         self._identifier: str = identifier
 
