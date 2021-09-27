@@ -90,11 +90,11 @@ class Node:
         https: bool,
         heartbeat: float,
         region: Optional[discord.VoiceRegion],
-        resume_key: Optional[str] = "bobo bobo",
-        resume: Optional[bool] = True,
         spotify: Optional[spotify.SpotifyClient],
         identifier: str,
         dumps: Callable[[Any], str],
+        resume_key: Optional[str] = "bobo bobo",
+        resume: Optional[bool] = True
     ):
         self.bot: discord.Client = bot
         self._host: str = host
