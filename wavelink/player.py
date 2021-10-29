@@ -173,6 +173,9 @@ class Player(discord.VoiceProtocol):
 
     async def disconnect(self, *, force: bool) -> None:
         try:
+            await self.node._websocket.send(
+                op="destroy", guildId=str(self.guild.id)
+            )
             logger.info(f"Disconnected from voice channel:: {self.channel.id}")
 
             await self.guild.change_voice_state(channel=None)
