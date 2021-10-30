@@ -173,8 +173,6 @@ class Player(discord.VoiceProtocol):
 
     async def disconnect(self, *, force: bool) -> None:
         try:
-            await self.stop()
-
             await self.node._websocket.send(
                 op="destroy", guildId=str(self.guild.id)
             )
