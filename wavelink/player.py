@@ -178,7 +178,6 @@ class Player(discord.VoiceProtocol):
             )
             logger.info(f"Disconnected from voice channel:: {self.channel.id}")
 
-            await self.guild.change_voice_state(channel=None)
             self._connected = False
         finally:
             self.node.players.remove(self)
